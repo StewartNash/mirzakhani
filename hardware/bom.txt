@@ -1,0 +1,29 @@
+LNA - Qorvo SGL0622Z
+https://www.digikey.com/en/products/detail/qorvo/SGL0622Z/24611169?s=N4IgTCBcDaIIoHsBOA3BACAygcQDIAYA2MMALRAF0BfIA
+31 dB, 5 MHz - 4 GHz, SiGe HBT MMIC
+U1
+
+Capacitor - Samsung Electro-Mechanics CL10C101JB8NNNC
+https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL10C101JB8NNNC/3886666
+100 pF, 5%, 50 V, C0G, 0603
+C3, C4, C5 --> (C3, C1, C2)
+
+Capacitor - Samsung Electro-Mechanics CL31B105KAHNNNE
+https://www.digikey.com/en/products/detail/samsung-electro-mechanics/CL31B105KAHNNNE/3886755
+1 uF, 10%, 25V, X7R, 1206
+C1 --> C5
+
+Capacitor - Murata GRM1885C1H122JA01D
+https://www.digikey.com/en/products/detail/murata-electronics/GRM1885C1H122JA01D/586939
+1200 pF, 5%, 50 V, NPO, 0603
+C2 --> C4
+
+Inductor - Murata Electronics LQG18HN68NJ00D
+https://www.digikey.com/en/products/detail/murata-electronics/LQG18HN68NJ00D/2594264
+68 nH, 5%, 400 mA, 0.8 Ohm, 0603
+L1
+
+Inductor - Johanson Technology Inc. LRC0603CJ68NGV001T
+https://www.digikey.com/en/products/detail/johanson-technology-inc/LRC0603CJ68NGV001T/1561324
+68 nH, 5%, 300 mA, 1.2 Ohm, 0603
+L1
