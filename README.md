@@ -41,3 +41,14 @@ In general, a Vivado only project is divided into the following directories
 7. **build:** Vivado generated files (ignored)
 8. **hardware:** Hardware
 9. **misc:** Miscellaneous material
+
+## Instructions
+
+To start Vivado, use the following command
+```
+source /tools/Xilinx/2025.2/Vivado/settings64.sh
+vivado &
+```
+
+
+
