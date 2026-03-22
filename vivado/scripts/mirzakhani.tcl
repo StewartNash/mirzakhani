@@ -34,8 +34,11 @@
 # Check file required for this script exists
 proc checkRequiredFiles { origin_dir} {
   set status true
+#  set files [list \
+# "[file normalize "$origin_dir/../../../../tmp/vivado/mirzakhani/mirzakhani.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc"]"\
+#  ]
   set files [list \
- "[file normalize "$origin_dir/../../../../tmp/vivado/mirzakhani/mirzakhani.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc"]"\
+ "[file normalize "$origin_dir/../../constraints/Zybo-Z7-Master.xdc"]"\
   ]
   foreach ifile $files {
     if { ![file isfile $ifile] } {
@@ -110,8 +113,8 @@ if { $::argc > 0 } {
   }
 }
 
-# Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/../../../../tmp/vivado/mirzakhani"]"
+## Set the directory path for the original project from where this script was exported
+#set orig_proj_dir "[file normalize "$origin_dir/../../../../tmp/vivado/mirzakhani"]"
 
 # Check for paths and files needed for project creation
 set validate_required 0
@@ -125,7 +128,8 @@ if { $validate_required } {
 }
 
 # Create project
-create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xc7z010clg400-1
+#create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xc7z010clg400-1
+create_project ${_xil_proj_name_} "$origin_dir/../../build/${_xil_proj_name_}" -part xc7z010clg400-1
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -135,7 +139,8 @@ set proj_dir [get_property directory [current_project]]
 
 # Set project properties
 set obj [current_project]
-set_property -name "board_part_repo_paths" -value "[file normalize "$origin_dir/../../../../.Xilinx/Vivado/2025.2/xhub/board_store/xilinx_board_store"]" -objects $obj
+#set_property -name "board_part_repo_paths" -value "[file normalize "$origin_dir/../../../../.Xilinx/Vivado/2025.2/xhub/board_store/xilinx_board_store"]" -objects $obj
+set_property board_part_repo_paths $::env(XILINX_BOARD_STORE) [current_project]
 set_property -name "board_part" -value "digilentinc.com:zybo-z7-10:part0:1.2" -objects $obj
 set_property -name "default_lib" -value "xil_defaultlib" -objects $obj
 set_property -name "enable_resource_estimation" -value "0" -objects $obj
@@ -179,9 +184,10 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize ${origin_dir}/../../../../tmp/vivado/mirzakhani/mirzakhani.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc]"
-set file_imported [import_files -fileset constrs_1 [list $file]]
-set file "constraints/Zybo-Z7-Master.xdc"
+#set file "[file normalize ${origin_dir}/../../../../tmp/vivado/mirzakhani/mirzakhani.srcs/constrs_1/imports/constraints/Zybo-Z7-Master.xdc]"
+#set file_imported [import_files -fileset constrs_1 [list $file]]
+add_files -fileset constrs_1 [glob "$origin_dir/../../constraints/*.xdc"]
+#set file "constraints/Zybo-Z7-Master.xdc"
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
 
@@ -740,13 +746,15 @@ set_property REGISTERED_WITH_MANAGER "1" [get_files design_1.bd ]
 set_property SYNTH_CHECKPOINT_MODE "Hierarchical" [get_files design_1.bd ] 
 
 #call make_wrapper to create wrapper files
-if { [get_property IS_LOCKED [ get_files -norecurse [list design_1.bd]] ] == 1  } {
-  import_files -fileset sources_1 [file normalize "${origin_dir}/../../../../tmp/vivado/mirzakhani/mirzakhani.gen/sources_1/bd/design_1/hdl/design_1_wrapper.v" ]
-} else {
-  set wrapper_path [make_wrapper -fileset sources_1 -files [ get_files -norecurse [list design_1.bd]] -top]
-  add_files -norecurse -fileset sources_1 $wrapper_path
-}
-
+#if { [get_property IS_LOCKED [ get_files -norecurse [list design_1.bd]] ] == 1  } {
+#  import_files -fileset sources_1 [file normalize "${origin_dir}/../../../../tmp/vivado/mirzakhani/mirzakhani.gen/sources_1/bd/design_1/hdl/design_1_wrapper.v" ]
+#} else {
+#  set wrapper_path [make_wrapper -fileset sources_1 -files [ get_files -norecurse [list design_1.bd]] -top]
+#  add_files -norecurse -fileset sources_1 $wrapper_path
+#}
+set bd_file [get_files -norecurse design_1.bd]
+set wrapper_file [make_wrapper -files $bd_file -top -return_files]
+add_files -norecurse $wrapper_file
 
 set idrFlowPropertiesConstraints ""
 catch {
