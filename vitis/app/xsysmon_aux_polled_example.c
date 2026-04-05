@@ -29,10 +29,10 @@
 /***************************** Include Files ********************************/
 
 #include <stdbool.h>
-
 #include "xsysmon.h"
 #include "xstatus.h"
 #include "xil_printf.h"
+#include "xuartps.h"
 
 /************************** Constant Definitions ****************************/
 #ifndef SDT
@@ -61,6 +61,13 @@
 const unsigned int MAX_LOOPS = 0x8000;
 unsigned int loopCount = 0;
 bool is_looping = true;
+
+#define BINARY_DATA
+
+#define BUF_SIZE 1024
+
+u16 buffer[BUF_SIZE];
+int buf_index = 0;
 
 /**************************** Type Definitions ******************************/
 
@@ -145,6 +152,8 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	u16 VAuxRawData[4];
 	XSysMon *SysMonInstPtr = &SysMonInst;
 	u32 Index;
+	
+	XUartPs Uart;
 
 	// Initialize the SysMon driver.
 	ConfigPtr = XSysMon_LookupConfig(SysMonDeviceId);
@@ -224,25 +233,44 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 		(int)(VAuxData[Index]), SysMonFractionToInt(VAuxData[Index]));
 	}
 	*/
-		while (is_looping) {
-
-			u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
-			float voltage = XSysMon_RawToVoltage(raw);
-
-			xil_printf("AUX0: %0d.%03d V\r\n",
-				(int)voltage,
-				SysMonFractionToInt(voltage));
-			
-#ifndef INFINITE_LOOP
-			if (is_looping) {
-				if (loopCount >= MAX_LOOPS) {
-					is_looping = false;
-				} else {
-					++loopCount;
-				}
+	//XUartPs_SetBaudRate(&Uart, 921600);	
+	is_looping = true;
+	while (is_looping) {
+#ifdef BINARY_DATA
+		// Fill buffer
+		//for (int i = 0; i < BUF_SIZE; i++) {
+			//	buffer[i] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+			//}
+			buf_index = 0;
+			while (buf_index < BUF_SIZE) {
+				buffer[buf_index++] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
 			}
+			u16 header = 0xAAAA;
+			XUartPs_Send(&Uart, (u8*)&header, 2);
+			// Send buffer
+			XUartPs_Send((&Uart, (u8*)buffer, BUF_SIZE * 2);
+			// Wait for send complete
+			while (XUartPs_IsSending(&Uart));
+			
+#else
+		u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+		float voltage = XSysMon_RawToVoltage(raw);
+
+		xil_printf("AUX0: %0d.%03d V\r\n",
+			(int)voltage,
+			SysMonFractionToInt(voltage));
 #endif
+
+#ifndef INFINITE_LOOP
+		if (is_looping) {
+			if (loopCount >= MAX_LOOPS) {
+				is_looping = false;
+			} else {
+				++loopCount;
+			}
 		}
+#endif
+	}
 
 	return XST_SUCCESS;
 }
