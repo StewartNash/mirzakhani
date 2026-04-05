@@ -44,12 +44,15 @@
 #define SYSMON_DEVICE_ID	0
 #endif
 // Use four External Channels for this Example
+/*
 #define XSM_SEQ_CH_AUX_MASK	XSM_SEQ_CH_AUX00 | \
 				XSM_SEQ_CH_AUX01 | \
 				XSM_SEQ_CH_AUX02 | \
 				XSM_SEQ_CH_AUX03
+*/
 
-
+// Use external channel 0
+#define XSM_SEQ_CH_AUX_MASK XSM_SEQ_CH_AUX00
 
 /**************************** Type Definitions ******************************/
 
@@ -190,13 +193,14 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	XSysMon_SetAdcClkDivisor(SysMonInstPtr, 32);
 
 	// Enable external Mux and connect to Aux CH0.
-	XSysMon_SetExtenalMux(SysMonInstPtr, 0x10); /* 0b'10000 to CH[4:0] */
+	//XSysMon_SetExtenalMux(SysMonInstPtr, 0x10); /* 0b'10000 to CH[4:0] */
 
 	// Enable the Channel Sequencer in continuous sequencer cycling mode.
 	XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-	 // Wait till the End of Sequence occurs
-	XSysMon_GetStatus(SysMonInstPtr); /* Clear the old status */
+        /*
+	// Wait till the End of Sequence occurs
+	XSysMon_GetStatus(SysMonInstPtr); // Clear the old status
 	while ((XSysMon_GetStatus(SysMonInstPtr) & XSM_SR_EOS_MASK) !=
 			XSM_SR_EOS_MASK);
 
@@ -211,6 +215,16 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 		xil_printf("\r\nThe VAUX%02d is %0d.%03d Volts. \r\n", Index,
 		(int)(VAuxData[Index]), SysMonFractionToInt(VAuxData[Index]));
 	}
+	*/
+        while (1) {
+
+            u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+            float voltage = XSysMon_RawToVoltage(raw);
+
+            xil_printf("AUX0: %0d.%03d V\r\n",
+                (int)voltage,
+                SysMonFractionToInt(voltage));
+        }
 
 
 	return XST_SUCCESS;
