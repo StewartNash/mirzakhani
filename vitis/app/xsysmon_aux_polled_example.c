@@ -18,10 +18,10 @@
 *
 * MODIFICATION HISTORY:
 *
-* Ver   Who    Date     Changes
+* Ver	Who    Date		Changes
 * ----- -----  -------- -----------------------------------------------------
-* 7.5   mn     09/12/18 First release
-* 7.8   cog    07/20/23 Added support for SDT flow
+* 7.5	mn	   09/12/18 First release
+* 7.8	cog    07/20/23 Added support for SDT flow
 * </pre>
 *
 *****************************************************************************/
@@ -39,7 +39,7 @@
  * xparameters.h file. They are defined here such that a user can easily
  * change all the needed parameters in one place.
  */
-#define SYSMON_DEVICE_ID 	XPAR_SYSMON_0_DEVICE_ID
+#define SYSMON_DEVICE_ID	XPAR_SYSMON_0_DEVICE_ID
 #else
 #define SYSMON_DEVICE_ID	0
 #endif
@@ -67,7 +67,7 @@ static int SysMonFractionToInt(float FloatNum);
 
 /************************** Variable Definitions ****************************/
 
-static XSysMon SysMonInst;      /* System Monitor driver instance */
+static XSysMon SysMonInst;		/* System Monitor driver instance */
 
 #ifndef TESTAPP_GEN
 /****************************************************************************/
@@ -126,7 +126,7 @@ int main(void)
 *		- XST_SUCCESS if the example has completed successfully.
 *		- XST_FAILURE if the example has failed.
 *
-* @note   	None
+* @note		None
 *
 ****************************************************************************/
 int SysMonAuxPolledExample(u16 SysMonDeviceId)
@@ -174,14 +174,14 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 
 	// Enable the averaging on the following channels in the Sequencer
 	// registers:
-	// 	- Auxiliary Channels - 0 to 3
+	//	- Auxiliary Channels - 0 to 3
 	Status =  XSysMon_SetSeqAvgEnables(SysMonInstPtr, XSM_SEQ_CH_AUX_MASK);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
 	// Enable the following channels in the Sequencer registers:
-	// 	- Auxiliary Channels - 0 to 3
+	//	- Auxiliary Channels - 0 to 3
 	Status =  XSysMon_SetSeqChEnables(SysMonInstPtr, XSM_SEQ_CH_AUX_MASK);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
@@ -198,7 +198,7 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	// Enable the Channel Sequencer in continuous sequencer cycling mode.
 	XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-        /*
+		/*
 	// Wait till the End of Sequence occurs
 	XSysMon_GetStatus(SysMonInstPtr); // Clear the old status
 	while ((XSysMon_GetStatus(SysMonInstPtr) & XSM_SR_EOS_MASK) !=
@@ -216,15 +216,15 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 		(int)(VAuxData[Index]), SysMonFractionToInt(VAuxData[Index]));
 	}
 	*/
-        while (1) {
+		while (1) {
 
-            u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
-            float voltage = XSysMon_RawToVoltage(raw);
+			u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+			float voltage = XSysMon_RawToVoltage(raw);
 
-            xil_printf("AUX0: %0d.%03d V\r\n",
-                (int)voltage,
-                SysMonFractionToInt(voltage));
-        }
+			xil_printf("AUX0: %0d.%03d V\r\n",
+				(int)voltage,
+				SysMonFractionToInt(voltage));
+		}
 
 
 	return XST_SUCCESS;
