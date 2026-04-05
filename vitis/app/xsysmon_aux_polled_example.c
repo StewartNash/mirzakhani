@@ -43,7 +43,7 @@
 #else
 #define SYSMON_DEVICE_ID	0
 #endif
-/* Use four External Channels for this Example */
+// Use four External Channels for this Example
 #define XSM_SEQ_CH_AUX_MASK	XSM_SEQ_CH_AUX00 | \
 				XSM_SEQ_CH_AUX01 | \
 				XSM_SEQ_CH_AUX02 | \
@@ -87,10 +87,8 @@ int main(void)
 	int Status;
 
 	xil_printf("Running Sysmon AUX polled Example\r\n");
-	/*
-	 * Run the SysMonitor AUX polled example, specify the Device ID that is
-	 * generated in xparameters.h .
-	 */
+	// Run the SysMonitor AUX polled example, specify the Device ID that is
+	// generated in xparameters.h .
 	Status = SysMonAuxPolledExample(SYSMON_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		xil_printf("Sysmon AUX polled Example Failed\r\n");
@@ -100,7 +98,7 @@ int main(void)
 	xil_printf("Successfully ran Sysmon AUX polled Example\r\n");
 	return XST_SUCCESS;
 }
-#endif /* TESTAPP_GEN */
+#endif // TESTAPP_GEN
 
 /****************************************************************************/
 /**
@@ -137,9 +135,7 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	XSysMon *SysMonInstPtr = &SysMonInst;
 	u32 Index;
 
-	/*
-	 * Initialize the SysMon driver.
-	 */
+	// Initialize the SysMon driver.
 	ConfigPtr = XSysMon_LookupConfig(SysMonDeviceId);
 	if (ConfigPtr == NULL) {
 		return XST_FAILURE;
@@ -147,30 +143,22 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	XSysMon_CfgInitialize(SysMonInstPtr, ConfigPtr,
 				ConfigPtr->BaseAddress);
 
-	/*
-	 * Self Test the System Monitor/ADC device
-	 */
+	// Self Test the System Monitor/ADC device
 	Status = XSysMon_SelfTest(SysMonInstPtr);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	/*
-	 * Disable the Channel Sequencer before configuring the Sequence
-	 * registers.
-	 */
+	// Disable the Channel Sequencer before configuring the Sequence
+	// registers.
 	XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_SAFE);
 
-	/*
-	 * Setup the Averaging to be done for the channels in the
-	 * Configuration 0 register as 16 samples:
-	 */
+	// Setup the Averaging to be done for the channels in the
+	// Configuration 0 register as 16 samples:
 	XSysMon_SetAvg(SysMonInstPtr, XSM_AVG_16_SAMPLES);
 
-	/*
-	 * Setup the Sequence register for 1st to 4th Auxiliary
-	 * channels
-	 */
+	// Setup the Sequence register for 1st to 4th Auxiliary
+	// channels
 	Status = XSysMon_SetSeqInputMode(SysMonInstPtr, XSM_SEQ_CH_AUX00);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
@@ -181,55 +169,41 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 		return XST_FAILURE;
 	}
 
-	/*
-	 * Enable the averaging on the following channels in the Sequencer
-	 * registers:
-	 * 	- Auxiliary Channels - 0 to 3
-	 */
+	// Enable the averaging on the following channels in the Sequencer
+	// registers:
+	// 	- Auxiliary Channels - 0 to 3
 	Status =  XSysMon_SetSeqAvgEnables(SysMonInstPtr, XSM_SEQ_CH_AUX_MASK);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	/*
-	 * Enable the following channels in the Sequencer registers:
-	 * 	- Auxiliary Channels - 0 to 3
-	 */
+	// Enable the following channels in the Sequencer registers:
+	// 	- Auxiliary Channels - 0 to 3
 	Status =  XSysMon_SetSeqChEnables(SysMonInstPtr, XSM_SEQ_CH_AUX_MASK);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
 
-	/*
-	 * Set the ADCCLK frequency equal to 1/32 of System clock for the System
-	 * Monitor/ADC in the Configuration Register 2.
-	 */
+	// Set the ADCCLK frequency equal to 1/32 of System clock for the System
+	// Monitor/ADC in the Configuration Register 2.
 	XSysMon_SetAdcClkDivisor(SysMonInstPtr, 32);
 
-	/*
-	 * Enable external Mux and connect to Aux CH0.
-	 */
+	// Enable external Mux and connect to Aux CH0.
 	XSysMon_SetExtenalMux(SysMonInstPtr, 0x10); /* 0b'10000 to CH[4:0] */
 
-	/*
-	 * Enable the Channel Sequencer in continuous sequencer cycling mode.
-	 */
+	// Enable the Channel Sequencer in continuous sequencer cycling mode.
 	XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-	/*
-	 * Wait till the End of Sequence occurs
-	 */
+	 // Wait till the End of Sequence occurs
 	XSysMon_GetStatus(SysMonInstPtr); /* Clear the old status */
 	while ((XSysMon_GetStatus(SysMonInstPtr) & XSM_SR_EOS_MASK) !=
 			XSM_SR_EOS_MASK);
 
-	XSysMon_GetStatus(SysMonInstPtr);	/* Clear the latched status */
+	XSysMon_GetStatus(SysMonInstPtr); // Clear the latched status
 
-	/*
-	 * Read the ADC converted Data from the data registers.
-	 */
-	/* Read ADC data for channels 0 - 3 */
+	// Read the ADC converted Data from the data registers.
+	// Read ADC data for channels 0 - 3
 	for (Index = 0; Index < 4; Index++) {
 		VAuxRawData[Index] = XSysMon_GetAdcData(SysMonInstPtr,
 					XSM_CH_AUX_MIN + Index);
