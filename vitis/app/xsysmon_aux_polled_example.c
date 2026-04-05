@@ -28,6 +28,8 @@
 
 /***************************** Include Files ********************************/
 
+#include <stdbool.h>
+
 #include "xsysmon.h"
 #include "xstatus.h"
 #include "xil_printf.h"
@@ -53,6 +55,12 @@
 
 // Use external channel 0
 #define XSM_SEQ_CH_AUX_MASK XSM_SEQ_CH_AUX00
+
+//#define INFINITE_LOOP
+
+const unsigned int MAX_LOOPS = 0x8000;
+unsigned int loopCount = 0;
+bool is_looping = true;
 
 /**************************** Type Definitions ******************************/
 
@@ -198,7 +206,7 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 	// Enable the Channel Sequencer in continuous sequencer cycling mode.
 	XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-		/*
+	/*
 	// Wait till the End of Sequence occurs
 	XSysMon_GetStatus(SysMonInstPtr); // Clear the old status
 	while ((XSysMon_GetStatus(SysMonInstPtr) & XSM_SR_EOS_MASK) !=
@@ -216,7 +224,7 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 		(int)(VAuxData[Index]), SysMonFractionToInt(VAuxData[Index]));
 	}
 	*/
-		while (1) {
+		while (is_looping) {
 
 			u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
 			float voltage = XSysMon_RawToVoltage(raw);
@@ -224,8 +232,17 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 			xil_printf("AUX0: %0d.%03d V\r\n",
 				(int)voltage,
 				SysMonFractionToInt(voltage));
+			
+#ifndef INFINITE_LOOP
+			if (is_looping) {
+				if (loopCount >= MAX_LOOPS) {
+					is_looping = false;
+				} else {
+					++loopCount;
+				}
+			}
+#endif
 		}
-
 
 	return XST_SUCCESS;
 }
