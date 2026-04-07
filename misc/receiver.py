@@ -8,7 +8,7 @@ BAUD_RATE = 115200 #921600
 
 def read_frame(ser):
     while True:
-        if ser.read(HEADER_LENGTH) == b'x\AA\xAA':
+        if ser.read(HEADER_LENGTH) == b'\xAA\xAA':
             return ser.read(FRAME_LENGTH)
 
 connection = serial.Serial('/dev/ttyUSB0', BAUD_RATE)

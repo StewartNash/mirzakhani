@@ -239,23 +239,21 @@ int SysMonAuxPolledExample(u16 SysMonDeviceId)
 #ifdef BINARY_DATA
 		// Fill buffer
 		//for (int i = 0; i < BUF_SIZE; i++) {
-			//	buffer[i] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
-			//}
-			buf_index = 0;
-			while (buf_index < BUF_SIZE) {
-				buffer[buf_index++] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
-			}
-			u16 header = 0xAAAA;
-			XUartPs_Send(&Uart, (u8*)&header, 2);
-			// Send buffer
-			XUartPs_Send((&Uart, (u8*)buffer, BUF_SIZE * 2);
-			// Wait for send complete
-			while (XUartPs_IsSending(&Uart));
-			
+		//	buffer[i] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+		//}
+		buf_index = 0;
+		while (buf_index < BUF_SIZE) {
+			buffer[buf_index++] = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
+		}
+		u16 header = 0xAAAA;
+		XUartPs_Send(&Uart, (u8*)&header, 2);
+		// Send buffer
+		XUartPs_Send(&Uart, (u8*)buffer, BUF_SIZE * 2);
+		// Wait for send complete
+		while (XUartPs_IsSending(&Uart));
 #else
 		u16 raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
 		float voltage = XSysMon_RawToVoltage(raw);
-
 		xil_printf("AUX0: %0d.%03d V\r\n",
 			(int)voltage,
 			SysMonFractionToInt(voltage));
