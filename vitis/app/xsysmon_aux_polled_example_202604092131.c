@@ -78,7 +78,7 @@ int SysMonAux0Example(u16 DeviceId)
     /* Start continuous mode */
     XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-    xil_printf("Sampling...\r\n");
+    xil_printf("START\r\n");
 
     while (sample_count < TOTAL_SAMPLES) {
 
@@ -107,6 +107,8 @@ int SysMonAux0Example(u16 DeviceId)
         /* Wait for next sample (10 Hz) */
         usleep(SAMPLE_PERIOD_US);
     }
+    
+    xil_printf("STOP\r\n");
 
     return XST_SUCCESS;
 }
