@@ -8,8 +8,8 @@
 /*
 // FIR
 typedef struct cascadestate {
-    float32_t s[2];  // filter state
-    float32_t c[2];  // filter coefficients
+	float32_t s[2];  // filter state
+	float32_t c[2];  // filter coefficients
 } cascadestate_t;
 
 // IIR
@@ -20,8 +20,8 @@ typedef struct cascadestate {
 */
 
 typedef struct cascadestatefir {
-    float32_t s[2];  // filter state
-    float32_t c[2];  // filter coefficients
+	float32_t s[2];  // filter state
+	float32_t c[2];  // filter coefficients
 } cascadestatefir_t;
 
 typedef struct cascadestateiir {
@@ -32,10 +32,10 @@ typedef struct cascadestateiir {
 /*
 // FIR
 float32_t cascadefir(float32_t x, cascadestate_t *p) {
-    float32_t r = x + (p->s[0] * p->c[0]) +  (p->s[1] * p->c[1]);
-    p->s[1] = p->s[0];
-    p->s[0] = x;
-    return r;
+	float32_t r = x + (p->s[0] * p->c[0]) +  (p->s[1] * p->c[1]);
+	p->s[1] = p->s[0];
+	p->s[0] = x;
+	return r;
 }
 
 // IIR
@@ -50,10 +50,10 @@ float32_t cascadeiir(float32_t x, cascadestate_t *p) {
 */
 
 float32_t cascadefir(float32_t x, cascadestatefir_t *p) {
-    float32_t r = x + (p->s[0] * p->c[0]) +  (p->s[1] * p->c[1]);
-    p->s[1] = p->s[0];
-    p->s[0] = x;
-    return r;
+	float32_t r = x + (p->s[0] * p->c[0]) +  (p->s[1] * p->c[1]);
+	p->s[1] = p->s[0];
+	p->s[0] = x;
+	return r;
 }
 
 float32_t cascadeiir(float32_t x, cascadestateiir_t *p) {
@@ -68,11 +68,11 @@ float32_t cascadeiir(float32_t x, cascadestateiir_t *p) {
 /*
 // FIR
 void createcascade(float32_t c0,
-                   float32_t c1,
-                   cascadestate_t *p) {
-    p->c[0] = c0;
-    p->c[1] = c1;
-    p->s[0] = p->s[1] = 0.0f;
+				   float32_t c1,
+				   cascadestate_t *p) {
+	p->c[0] = c0;
+	p->c[1] = c1;
+	p->s[0] = p->s[1] = 0.0f;
 }
 
 // IIR
@@ -93,11 +93,11 @@ void createcascade(
 */
 
 void createcascadefir(float32_t c0,
-                   float32_t c1,
-                   cascadestatefir_t *p) {
-    p->c[0] = c0;
-    p->c[1] = c1;
-    p->s[0] = p->s[1] = 0.0f;
+				   float32_t c1,
+				   cascadestatefir_t *p) {
+	p->c[0] = c0;
+	p->c[1] = c1;
+	p->s[0] = p->s[1] = 0.0f;
 }
 
 void createcascadeiir(
@@ -138,10 +138,10 @@ cascadestateiir_t iirstage2;
 /*
 // FIR
 void initcascade() {
-    createcascade(    0.0f,  1.0f, &stage1);
-    createcascade( M_SQRT2,  1.0f, &stage2);
-    createcascade(-M_SQRT2,  1.0f, &stage3);
-    createcascade(    1.0f,  0.0f, &stage4);
+	createcascade(	  0.0f,  1.0f, &stage1);
+	createcascade( M_SQRT2,  1.0f, &stage2);
+	createcascade(-M_SQRT2,  1.0f, &stage3);
+	createcascade(	  1.0f,  0.0f, &stage4);
 }
 
 // IIR
@@ -162,10 +162,10 @@ void initcascade() {
 */
 
 void initcascadefir() {
-    createcascadefir(    0.0f,  1.0f, &firstage1);
-    createcascadefir( M_SQRT2,  1.0f, &firstage2);
-    createcascadefir(-M_SQRT2,  1.0f, &firstage3);
-    createcascadefir(    1.0f,  0.0f, &firstage4);
+	createcascadefir(	 0.0f,	1.0f, &firstage1);
+	createcascadefir( M_SQRT2,	1.0f, &firstage2);
+	createcascadefir(-M_SQRT2,	1.0f, &firstage3);
+	createcascadefir(	 1.0f,	0.0f, &firstage4);
 }
 
 void initcascadeiir() {
@@ -187,17 +187,17 @@ void initcascadeiir() {
 // FIR
 uint16_t processCascade(uint16_t x) {
 
-    float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
-    float32_t v;
-    static float32_t d;
+	float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
+	float32_t v;
+	static float32_t d;
 
-    v = cascadefir(d, &stage1);
-    v = cascadefir(v, &stage2);
-    v = cascadefir(v, &stage3);
-    v = cascadefir(v, &stage4);
-    d = input;
+	v = cascadefir(d, &stage1);
+	v = cascadefir(v, &stage2);
+	v = cascadefir(v, &stage3);
+	v = cascadefir(v, &stage4);
+	d = input;
 
-    return f32_to_dac14(v*0.125);
+	return f32_to_dac14(v*0.125);
 }
 
 // IIR
@@ -214,17 +214,17 @@ uint16_t processCascade(uint16_t x) {
 
 uint16_t processCascadefir(uint16_t x) {
 
-    float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
-    float32_t v;
-    static float32_t d;
+	float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
+	float32_t v;
+	static float32_t d;
 
-    v = cascadefir(d, &firstage1);
-    v = cascadefir(v, &firstage2);
-    v = cascadefir(v, &firstage3);
-    v = cascadefir(v, &firstage4);
-    d = input;
+	v = cascadefir(d, &firstage1);
+	v = cascadefir(v, &firstage2);
+	v = cascadefir(v, &firstage3);
+	v = cascadefir(v, &firstage4);
+	d = input;
 
-    return f32_to_dac14(v*0.125);
+	return f32_to_dac14(v*0.125);
 }
 
 uint16_t processCascadeiir(uint16_t x) {
