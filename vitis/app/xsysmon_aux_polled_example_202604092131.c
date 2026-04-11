@@ -12,6 +12,10 @@
 #define SAMPLE_RATE_HZ 10
 #define SAMPLE_PERIOD_US (1000000 / SAMPLE_RATE_HZ)
 
+#define CHANNEL_NAME "AUX0"
+#define UNIT_NAME "Volts"
+#define COMMENT_STR "SysMon AUX0 Sampling"
+
 #define TOTAL_SAMPLES 100
 #define BATCH_SIZE 10   // print every 10 samples
 
@@ -26,7 +30,12 @@ int main(void)
 {
     int Status;
 
-    xil_printf("SysMon AUX0 Sampling Example (10 Hz)\r\n");
+    xil_printf("#START\r\n");
+    xil_printf("#RATE=%d\r\n", SAMPLE_RATE_HZ);
+    xil_printf("#PERIOD_US=%d\r\n", SAMPLE_PERIOD_US);
+    xil_printf("#CHANNEL=%s\r\n", CHANNEL_NAME);
+    xil_printf("#UNIT=%s\r\n", UNIT_NAME);
+    xil_printf("#COMMENT=%s\r\n", COMMENT_STR);
 
     Status = SysMonAux0Example(SYSMON_DEVICE_ID);
     if (Status != XST_SUCCESS) {
@@ -78,12 +87,12 @@ int SysMonAux0Example(u16 DeviceId)
     /* Start continuous mode */
     XSysMon_SetSequencerMode(SysMonInstPtr, XSM_SEQ_MODE_CONTINPASS);
 
-    xil_printf("START\r\n");
+    //xil_printf("#START\r\n");
 
     while (sample_count < TOTAL_SAMPLES) {
 
         /* Read AUX0 */
-        raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_0);
+        raw = XSysMon_GetAdcData(SysMonInstPtr, XSM_CH_AUX_MIN);
         voltage = XSysMon_RawToVoltage(raw);
 
         /* Store in batch */
@@ -108,7 +117,7 @@ int SysMonAux0Example(u16 DeviceId)
         usleep(SAMPLE_PERIOD_US);
     }
     
-    xil_printf("STOP\r\n");
+    xil_printf("#STOP\r\n");
 
     return XST_SUCCESS;
 }
