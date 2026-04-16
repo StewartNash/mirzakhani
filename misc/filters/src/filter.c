@@ -1,33 +1,4 @@
-
-/* https://schaumont.dyn.wpi.edu/ece4703b20/lecture4.html */
-/* https://schaumont.dyn.wpi.edu/ece4703b20/lecture5.html */
-
-
-//TODO: Move FIR and IIR implementations to their own header with a unique namespace (or give them a unique namespace here?)
-
-/*
-// FIR
-typedef struct cascadestate {
-	float32_t s[2];  // filter state
-	float32_t c[2];  // filter coefficients
-} cascadestate_t;
-
-// IIR
-typedef struct cascadestate {
-	float32_t b[3]; // Numerator coefficients b0 b1 b2
-	float32_t a[2];  // Denominator coefficients a1 a2
-} cascadestate_t;
-*/
-
-typedef struct cascadestatefir {
-	float32_t s[2];  // filter state
-	float32_t c[2];  // filter coefficients
-} cascadestatefir_t;
-
-typedef struct cascadestateiir {
-	float32_t b[3]; // Numerator coefficients b0 b1 b2
-	float32_t a[2];  // Denominator coefficients a1 a2
-} cascadestateiir_t;
+#include "filter.h"
 
 /*
 // FIR
