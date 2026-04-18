@@ -1,10 +1,22 @@
-
 /* https://schaumont.dyn.wpi.edu/ece4703b20/lecture4.html */
 /* https://schaumont.dyn.wpi.edu/ece4703b20/lecture5.html */
 
+#define DEBUG_TEST
+
+#ifdef DEBUG_TEST
+/*
+#warning "Please undefine DEBUG_TEST."
+#define float32_t float
+*/
+#pragma message("Please undefine DEBUG_TEST.")
+#include <stdint.h>
+typedef float float32_t;
+#endif
 
 #ifndef FILTER_H
 #define FILTER_H
+
+#define OUTPUT_GAIN 0.125f
 
 /*
 // FIR
@@ -15,8 +27,9 @@ typedef struct cascadestate {
 
 // IIR
 typedef struct cascadestate {
-	float32_t b[3]; // Numerator coefficients b0 b1 b2
-	float32_t a[2];  // Denominator coefficients a1 a2
+	float32_t s[2];   // state
+	float32_t b[3];  // nominator coeff  b0 b1 b2
+	float32_t a[2];  // denominator coeff   a1 a2
 } cascadestate_t;
 */
 
@@ -26,8 +39,9 @@ typedef struct cascadestatefir {
 } cascadestatefir_t;
 
 typedef struct cascadestateiir {
-	float32_t b[3]; // Numerator coefficients b0 b1 b2
-	float32_t a[2];  // Denominator coefficients a1 a2
+	float32_t s[2];   // state
+	float32_t b[3];  // nominator coeff  b0 b1 b2
+	float32_t a[2];  // denominator coeff   a1 a2
 } cascadestateiir_t;
 
 /*
@@ -59,8 +73,8 @@ uint16_t processCascade(uint16_t x); // FIR
 uint16_t processCascade(uint16_t x); // IIR
 */
 
-uint16_t processCascadefir(uint16_t x);
-uint16_t processCascadeiir(uint16_t x);
+float32_t processCascadefir(float32_t x);
+float32_t processCascadeiir(float32_t x);
 
 #endif
 

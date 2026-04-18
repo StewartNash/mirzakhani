@@ -1,3 +1,6 @@
+#include <math.h>
+//#include <stdlib.h>
+
 #include "filter.h"
 
 /*
@@ -64,8 +67,8 @@ void createcascade(
 */
 
 void createcascadefir(float32_t c0,
-				   float32_t c1,
-				   cascadestatefir_t *p) {
+	float32_t c1,
+	cascadestatefir_t *p) {
 	p->c[0] = c0;
 	p->c[1] = c1;
 	p->s[0] = p->s[1] = 0.0f;
@@ -133,10 +136,10 @@ void initcascade() {
 */
 
 void initcascadefir() {
-	createcascadefir(	 0.0f,	1.0f, &firstage1);
-	createcascadefir( M_SQRT2,	1.0f, &firstage2);
-	createcascadefir(-M_SQRT2,	1.0f, &firstage3);
-	createcascadefir(	 1.0f,	0.0f, &firstage4);
+	createcascadefir(0.0f, 1.0f, &firstage1);
+	createcascadefir(M_SQRT2, 1.0f, &firstage2);
+	createcascadefir(-M_SQRT2, 1.0f, &firstage3);
+	createcascadefir(1.0f, 0.0f, &firstage4);
 }
 
 void initcascadeiir() {
@@ -168,7 +171,7 @@ uint16_t processCascade(uint16_t x) {
 	v = cascadefir(v, &stage4);
 	d = input;
 
-	return f32_to_dac14(v*0.125);
+	return f32_to_dac14(v * 0.125);
 }
 
 // IIR
@@ -183,9 +186,9 @@ uint16_t processCascade(uint16_t x) {
 }
 */
 
-uint16_t processCascadefir(uint16_t x) {
+float32_t processCascadefir(float32_t x) {
 
-	float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
+	float32_t input = x;
 	float32_t v;
 	static float32_t d;
 
@@ -195,16 +198,20 @@ uint16_t processCascadefir(uint16_t x) {
 	v = cascadefir(v, &firstage4);
 	d = input;
 
-	return f32_to_dac14(v*0.125);
+	v = v * OUTPUT_GAIN;
+
+	return v;
 }
 
-uint16_t processCascadeiir(uint16_t x) {
-	float32_t input = adc14_to_f32(0x1800 + rand() % 0x1000);
+float32_t processCascadeiir(float32_t x) {
+	float32_t input = x;
 	float32_t v;
 
 	v = cascadeiir(input, &iirstage1);
 	v = cascadeiir(v, &iirstage2);
+	
+	v = v * OUTPUT_GAIN;
 
-	return f32_to_dac14(v * 0.125);
+	return v;
 }
 
