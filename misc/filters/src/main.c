@@ -5,6 +5,9 @@
 
 int main(int argc, char *argv[]) {
 	FILE* file;
+	int i;
+	double amplitude, frequency, time, phase;
+	double y;
 	
 	file = fopen("data.txt", "w");
 	if (file == NULL) {
@@ -26,8 +29,28 @@ int main(int argc, char *argv[]) {
 	fprintf(file, "#UNIT=%s\r\n", UNIT_NAME);
 	fprintf(file, "#COMMENT=%s\r\n", COMMENT_STR);
 	
+	amplitude = 1.0;
+	frequency = 1.0;
+	phase = 0;
+        for (i = 0; i < TOTAL_SAMPLES; i++) {
+            time = i * SAMPLE_PERIOD_US * 1e-6;  // convert to seconds
+            y = sine_wave(amplitude, frequency, time, phase);
+
+            printf("%f", y);
+            fprintf(file, "%f", y);
+
+            if ((i + 1) % BATCH_SIZE == 0) {
+                printf("\r\n");
+                fprintf(file, "\r\n");
+            } else {
+                printf(",");
+                fprintf(file, ",");
+            }
+        }
+	
 	fclose(file);
 	printf("Done!\r\n");
 
 	return 0;
 }
+

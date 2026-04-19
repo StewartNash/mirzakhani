@@ -1,7 +1,6 @@
 #pragma once
 
 #include <math.h>
-
 //#define PI 3.14159265359
 
 #define BASE_CLOCK 1000000
@@ -15,7 +14,7 @@
 #define TOTAL_SAMPLES 100
 #define BATCH_SIZE 10 // Print width
 
-inline double sine_wave(double amplitude, double frequency, double time, double phase) {
+double sine_wave(double amplitude, double frequency, double time, double phase) {
 	double angularFrequency = 2.0 * M_PI * frequency;
 	
 	return amplitude * sin(angularFrequency * time + phase);
