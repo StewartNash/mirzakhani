@@ -14,14 +14,14 @@ def parse_sessions(filename):
         for line in f:
             line = line.strip()
 
-            # --- START ---
+            # START
             if line == "#START":
                 recording = True
                 metadata = {}
                 current_data = []
                 continue
 
-            # --- STOP ---
+            # STOP 
             if line == "#STOP":
                 if current_data:
                     sessions.append({
@@ -34,7 +34,7 @@ def parse_sessions(filename):
             if not recording:
                 continue
 
-            # --- Metadata ---
+            # Metadata
             if line.startswith("#"):
                 try:
                     key, value = line[1:].split("=", 1)
@@ -43,12 +43,19 @@ def parse_sessions(filename):
                     continue
                 continue
 
-            # --- Data ---
+            # Data
             try:
                 values = [float(x) for x in line.split(",") if x]
                 current_data.extend(values)
             except ValueError:
                 continue
+                
+    if metadata and not sessions:
+        print("WARNING: Session was not ended. Artificially ending session.")
+        sessions.append({
+            "metadata": metadata,
+            "data": np.array(current_data)
+        })
 
     return sessions
 

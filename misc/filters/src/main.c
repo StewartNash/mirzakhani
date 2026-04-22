@@ -47,6 +47,8 @@ int main(int argc, char *argv[]) {
                 fprintf(file, ",");
             }
         }
+        
+ 	printf("#STOP\r\n");       
 	
 	fclose(file);
 	printf("Done!\r\n");
