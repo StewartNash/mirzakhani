@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-FILE_NAME = "data.txt"
+#FILE_NAME = "data.txt"
+FILE_NAME = "filters/build/data.txt"
 
 def parse_sessions(filename):
     sessions = []
