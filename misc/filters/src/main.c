@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	fprintf(file, "#COMMENT=%s\r\n", COMMENT_STR);
 	
 	amplitude = 1.0;
-	frequency = 1.0;
+	frequency = 5.0;
 	phase = 0;
         for (i = 0; i < TOTAL_SAMPLES; i++) {
             time = i * SAMPLE_PERIOD_US * 1e-6;  // convert to seconds
