@@ -1,7 +1,6 @@
 #pragma once
 
-#include <math.h>
-//#define PI 3.14159265359
+#include <stdbool.h>
 
 #define BASE_CLOCK 1000000
 #define SAMPLE_RATE_HZ 250
@@ -11,12 +10,11 @@
 #define UNIT_NAME "Volts"
 #define COMMENT_STR "SysMon AUX0 Sampling"
 
-#define TOTAL_SAMPLES 1000
+#define TOTAL_SAMPLES 500
 #define BATCH_SIZE 10 // Print width
 
-double sine_wave(double amplitude, double frequency, double time, double phase) {
-	double angularFrequency = 2.0 * M_PI * frequency;
-	
-	return amplitude * sin(angularFrequency * time + phase);
-}
+const bool IS_NOISE_ENABLED = 1;
+const double NOISE_AMPLITUDE = 0.1;
+
+double sine_wave(double amplitude, double frequency, double time_, double phase);
 

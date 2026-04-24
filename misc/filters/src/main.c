@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <math.h>
+//#define PI 3.14159265359
+#include <stdlib.h>
+#include <time.h>
 
 #include "main.h"
 #include "filter.h"
@@ -6,8 +10,10 @@
 int main(int argc, char *argv[]) {
 	FILE* file;
 	int i;
-	double amplitude, frequency, time, phase;
+	double amplitude, frequency, time_, phase;
 	double y;
+	
+	srand(time(NULL));
 	
 	file = fopen("data.txt", "w");
 	if (file == NULL) {
@@ -33,8 +39,13 @@ int main(int argc, char *argv[]) {
 	frequency = 5.0;
 	phase = 0;
         for (i = 0; i < TOTAL_SAMPLES; i++) {
-            time = i * SAMPLE_PERIOD_US * 1e-6;  // convert to seconds
-            y = sine_wave(amplitude, frequency, time, phase);
+            time_ = i * SAMPLE_PERIOD_US * 1e-6;  // convert to seconds
+            y = sine_wave(amplitude, frequency, time_, phase);
+            
+            if (IS_NOISE_ENABLED) {
+                double noise = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+                y += NOISE_AMPLITUDE * noise;
+            }
 
             printf("%f", y);
             fprintf(file, "%f", y);
@@ -48,11 +59,17 @@ int main(int argc, char *argv[]) {
             }
         }
         
- 	printf("#STOP\r\n");       
+ 	printf("#STOP\r\n");
 	
 	fclose(file);
 	printf("Done!\r\n");
 
 	return 0;
+}
+
+double sine_wave(double amplitude, double frequency, double time_, double phase) {
+	double angularFrequency = 2.0 * M_PI * frequency;
+	
+	return amplitude * sin(angularFrequency * time_ + phase);
 }
 
