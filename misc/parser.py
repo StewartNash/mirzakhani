@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 #FILE_NAME = "data.txt"
 FILE_NAME = "filters/build/data.txt"
+OUTPUT_FILE = "filters/build/output.txt"
 
 def parse_sessions(filename):
     sessions = []
@@ -62,6 +63,7 @@ def parse_sessions(filename):
 
 # ===== Load =====
 sessions = parse_sessions(FILE_NAME)
+outputs = parse_sessions(OUTPUT_FILE)
 
 if not sessions:
     print("No valid sessions found.")
@@ -71,6 +73,10 @@ if not sessions:
 session = sessions[-1]
 data = session["data"]
 meta = session["metadata"]
+
+output = outputs[-1]
+data_out = output["data"]
+meta_out = output["metadata"]
 
 # ===== Extract metadata safely =====
 rate = int(meta.get("RATE", 0))
@@ -85,9 +91,11 @@ if rate > 0:
 else:
     t = np.arange(len(data))
 
+
 # ===== Plot =====
 plt.figure()
 plt.plot(t, data)
+plt.plot(t, data_out)
 
 plt.title(f"{channel} ({unit}) | {rate} Hz\n{comment}")
 plt.xlabel("Time (s)" if rate > 0 else "Sample Index")

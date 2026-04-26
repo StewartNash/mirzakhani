@@ -9,17 +9,21 @@
 
 int main(int argc, char *argv[]) {
 	FILE* file;
+	FILE* output;
 	int i;
 	double amplitude, frequency, time_, phase;
-	double y;
+	double x, y;
 	
 	srand(time(NULL));
 	
 	file = fopen("data.txt", "w");
+	output = fopen("output.txt", "w");
 	if (file == NULL) {
 		printf("ERROR: Could not create data.txt\r\n");
 		return 1;
 	}
+	
+	initcascadefir();
 
 	printf("#START\r\n");
 	printf("#RATE=%d\r\n", SAMPLE_RATE_HZ);
@@ -35,33 +39,47 @@ int main(int argc, char *argv[]) {
 	fprintf(file, "#UNIT=%s\r\n", UNIT_NAME);
 	fprintf(file, "#COMMENT=%s\r\n", COMMENT_STR);
 	
+	fprintf(output, "#START\r\n");
+	fprintf(output, "#RATE=%d\r\n", SAMPLE_RATE_HZ);
+	fprintf(output, "#PERIOD_US=%d\r\n", SAMPLE_PERIOD_US);
+	fprintf(output, "#CHANNEL=%s\r\n", CHANNEL_NAME);
+	fprintf(output, "#UNIT=%s\r\n", UNIT_NAME);
+	fprintf(output, "#COMMENT=%s\r\n", COMMENT_STR);
+	
 	amplitude = 1.0;
 	frequency = 5.0;
 	phase = 0;
         for (i = 0; i < TOTAL_SAMPLES; i++) {
             time_ = i * SAMPLE_PERIOD_US * 1e-6;  // convert to seconds
-            y = sine_wave(amplitude, frequency, time_, phase);
+            x = sine_wave(amplitude, frequency, time_, phase);
             
             if (IS_NOISE_ENABLED) {
                 double noise = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
-                y += NOISE_AMPLITUDE * noise;
+                x += NOISE_AMPLITUDE * noise;
             }
+            y = processCascadefir((float)x);       
 
-            printf("%f", y);
-            fprintf(file, "%f", y);
+            printf("%f", x);
+            fprintf(file, "%f", x);
+            fprintf(output, "%f", y);
 
             if ((i + 1) % BATCH_SIZE == 0) {
                 printf("\r\n");
                 fprintf(file, "\r\n");
+                fprintf(output, "\r\n");
             } else {
                 printf(",");
                 fprintf(file, ",");
+                fprintf(output, ",");
             }
         }
         
  	printf("#STOP\r\n");
+ 	fprintf(file, "#STOP\r\n");
+ 	fprintf(output, "#STOP\r\n");
 	
 	fclose(file);
+	fclose(output);
 	printf("Done!\r\n");
 
 	return 0;
