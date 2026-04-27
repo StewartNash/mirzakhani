@@ -10,6 +10,7 @@ include_directories(include)
 add_executable(filter_test
 	src/main.c
 	src/filter.c
+	src/adc.c
 )
 target_link_libraries(filter_test m)
 
