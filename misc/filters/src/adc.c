@@ -48,3 +48,19 @@ void fprint_uuid(FILE *file, char *bytes) {
 	);
 }
 
+void printheader(session my_session) {
+
+}
+
+void fprintheader(FILE* file, session my_session) {
+
+}
+
+void printfooter() {
+
+}
+
+void fprintfooter(FILE* file) {
+
+}
+

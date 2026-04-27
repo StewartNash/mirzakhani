@@ -6,6 +6,7 @@
 
 #include "main.h"
 #include "filter.h"
+#include "adc.h"
 
 int main(int argc, char *argv[]) {
 	FILE* file;

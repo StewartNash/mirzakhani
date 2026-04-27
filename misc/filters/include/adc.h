@@ -28,5 +28,9 @@ struct session {
 void uuid(char *output);
 void print_uuid(char *bytes);
 void fprint_uuid(FILE* file, char *bytes);
+void printheader(session my_session);
+void fprintheader(FILE* file, session my_session);
+void printfooter();
+void fprintfooter(FILE* file);
 
 #endif
