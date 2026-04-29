@@ -186,7 +186,7 @@ uint16_t processCascade(uint16_t x) {
 }
 */
 
-float32_t processCascadefir(float32_t x) {
+float32_t processcascade_fir(float32_t x) {
 
 	float32_t input = x;
 	float32_t v;
@@ -203,7 +203,7 @@ float32_t processCascadefir(float32_t x) {
 	return v;
 }
 
-float32_t processCascadeiir(float32_t x) {
+float32_t processcascade_iir(float32_t x) {
 	float32_t input = x;
 	float32_t v;
 

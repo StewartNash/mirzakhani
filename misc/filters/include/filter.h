@@ -73,8 +73,8 @@ uint16_t processCascade(uint16_t x); // FIR
 uint16_t processCascade(uint16_t x); // IIR
 */
 
-float32_t processCascadefir(float32_t x);
-float32_t processCascadeiir(float32_t x);
+float32_t processcascade_fir(float32_t x);
+float32_t processcascade_iir(float32_t x);
 
 #endif
 

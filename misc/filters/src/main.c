@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
                 double noise = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
                 x += NOISE_AMPLITUDE * noise;
             }
-            y = processCascadefir((float)x);       
+            y = processcascade_fir((float)x);       
 
             printf("%f", x);
             fprintf(file, "%f", x);
@@ -87,8 +87,8 @@ int main(int argc, char *argv[]) {
 }
 
 double sine_wave(double amplitude, double frequency, double time_, double phase) {
-	double angularFrequency = 2.0 * M_PI * frequency;
+	double angular_frequency = 2.0 * M_PI * frequency;
 	
-	return amplitude * sin(angularFrequency * time_ + phase);
+	return amplitude * sin(angular_frequency * time_ + phase);
 }
 

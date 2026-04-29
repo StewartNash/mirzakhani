@@ -16,7 +16,7 @@ void uuid(char *output) {
 	bytes[8] = (bytes[8] & 0x3F) | 0x80;
 }
 
-void print_uuid(char *bytes) {
+void print_uuid(char *message, char *bytes) {
 	sprintf(message,
 		"%02x%02x%02x%02x-"
 		"%02x%02x-"
@@ -48,12 +48,40 @@ void fprint_uuid(FILE *file, char *bytes) {
 	);
 }
 
-void printheader(session my_session) {
-
+void printheader(struct session my_session) {
+	/*
+	printf("#START\r\n");
+	printf("#RATE=%d\r\n", (int)my_session.sample_rate_hz);
+	printf("#PERIOD_US=%d\r\n", (int)my_session.sample_period_us);
+	printf("#CHANNEL=%s\r\n", my_session.channel_name);
+	printf("#UNIT=%s\r\n", my_session.unit_name);
+	printf("#COMMENT=%s\r\n", my_session.comment_str);
+	*/
+	
+	printf("#START\r\n");
+	printf("#RATE=%f\r\n", my_session.sample_rate_hz);
+	printf("#PERIOD_US=%f\r\n", my_session.sample_period_us);
+	printf("#CHANNEL=%s\r\n", my_session.channel_name);
+	printf("#UNIT=%s\r\n", my_session.unit_name);
+	printf("#COMMENT=%s\r\n", my_session.comment_str);	
 }
 
-void fprintheader(FILE* file, session my_session) {
-
+void fprintheader(FILE* file, struct session my_session) {
+	/*
+	fprintf(file, "#START\r\n");
+	fprintf(file, "#RATE=%d\r\n", (int)my_session.sample_rate_hz);
+	fprintf(file, "#PERIOD_US=%d\r\n", (int)my_session.sample_period_us);
+	fprintf(file, "#CHANNEL=%s\r\n", my_session.channel_name);
+	fprintf(file, "#UNIT=%s\r\n", my_session.unit_name);
+	fprintf(file, "#COMMENT=%s\r\n", my_session.comment_str);
+	*/
+	
+	fprintf(file, "#START\r\n");
+	fprintf(file, "#RATE=%f\r\n", my_session.sample_rate_hz);
+	fprintf(file, "#PERIOD_US=%f\r\n", my_session.sample_period_us);
+	fprintf(file, "#CHANNEL=%s\r\n", my_session.channel_name);
+	fprintf(file, "#UNIT=%s\r\n", my_session.unit_name);
+	fprintf(file, "#COMMENT=%s\r\n", my_session.comment_str);
 }
 
 void printfooter() {
