@@ -57,10 +57,10 @@ void fprintheader(FILE* file, session my_session) {
 }
 
 void printfooter() {
-
+ 	printf("#STOP\r\n");
 }
 
 void fprintfooter(FILE* file) {
-
+ 	fprintf(file, "#STOP\r\n");
 }
 
