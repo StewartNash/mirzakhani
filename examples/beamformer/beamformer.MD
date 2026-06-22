@@ -1,5 +1,9 @@
 # Beamformer
 
+## Introduction
+
+This educational repository contains MATLAB scripts to implement adaptive filtering. The filters take the form of one-dimensional complex, joint process structures and a two-dimensional filter for an adaptive beamformer.
+
 ## Joint Complex Gradient Transversal Filter
 
 A joint complex gradient transversal filter (JCGTF or JCLMS transversal filter) can be conceived of as a complex-valued LMS adaptive FIR filter. The filter output is given as
