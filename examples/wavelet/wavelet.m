@@ -1,7 +1,14 @@
 disp("Hello, World!")
 
+N = 4;
+n = 128;
+f = zeros(n);
+f(1 : 32) = 1;
+f(65 : 96) : 1;
+displayn(f, N);
+
 function a = wavedn(f, N)
-%
+%WAVEDN Wavelet transform
 	M = length(f);
 	n = round(log(M) / log(2));
 	c = dcoeffs(N);
@@ -24,9 +31,9 @@ function a = wavedn(f, N)
 			z = a(k);
 			[mr, nc] = size(z);
 			if nc > 1
-				z = z.'
+				z = z.';
 			end
-			x(i) = x * z;
+			x(i) = c * z;
 			y(i) = clr * z;
 		end
 		x = x / 2;
@@ -37,7 +44,7 @@ function a = wavedn(f, N)
 end
 
 function f = iwavedn(a, N)
-%
+%IWAVEDN Inverse wavelet transform
 	M = length(a);
 	n = round(log(M) / log(2));
 	c = dcoeffs(N);
@@ -54,7 +61,7 @@ function f = iwavedn(a, N)
 			for j = 1 : N / 2
 				k(j) = m + i - N / 2 + j;
 				while k(j) < m + 1
-					k(j) = k(j) + m
+					k(j) = k(j) + m;
 				end
 			end
 			z = a(k);
@@ -75,25 +82,26 @@ function f = iwavedn(a, N)
 end
 
 function A = displayn(f, N)
-%
+%DISPLAYN Display reconstruction of (real) signal from wavelet transform
+	f1 = figure;
 	M = length(f);
 	n = round(log(M) / log(2));
-	subplot(2 1 1)
+	subplot(2, 1, 1)
 	plot(f)
 	grid
-	title('signal f')
+	title('Signal f')
 	a = wavedn(f, N);
 	plot(a)
 	grid
-	title(['wavelet transform wavedn(f,', int2str(N), ')'])
-	xlabel('PRESS TO CONTINUE . . . AND WAIT PLEASE')
-	pause
+	title(['Wavelet Transform wavedn(f,', int2str(N), ')'])
+	%xlabel('PRESS TO CONTINUE . . . AND WAIT PLEASE')
+	pause(2)
 	%
 	b = zeros(1, M);
 	b(1) = a(1);
 	A(1, :) = iwavedn(b, N);
 	for i = 2 : 1 : n + 1
-		b = zeros(1 : M);
+		b = zeros(1, M);
 		b(2 ^ (i - 2) + 1 : 2 ^ (i - 1)) = a(2 ^ (i - 2) + 1 : 2 ^ (i - 1));
 		A(i, :) = iwavedn(b, N);
 	end
@@ -101,25 +109,49 @@ function A = displayn(f, N)
 	j = 0;
 	for i = 1 : 1 : n + 1
 		plot (A(i, :))
-		gridtitle(['wavelet level ', int2str(i - 2)])
+		grid
+		title(['Wavelet Level ', int2str(i - 2)])
+		xlim([1 M])
 		j = j + 1;
 		if j == 2
-			xlabel('PRESS TO CONTINUE')
-			pause
+			%xlabel('PRESS TO CONTINUE')
+			pause(2)
 			j = j - 2;
 		end
 	end
 	plot(sum(A))
 	grid
-	title('Reconstructed signal: all levels added')
-	xlabel('PRESS TO CONTINUE')
-	pause
-	clg
-	subplot(1 1 1)
+	title('Reconstructed Signal: All levels added')
+	%xlabel('PRESS TO CONTINUE')
+	xlim([1 M])
+	pause(2)
+	clf
+	%subplot(1, 1, 1)
+	for i = 1 : 1 : n + 1
+		subplot(n + 1, 1, i)
+		plot(A(i, :))
+		grid
+		title(['Wavelet Level ', int2str(i - 2)])
+		xlim([1 M])
+		%ylim([-2 2])
+	end
+	f2 = figure;
+	b = zeros(size(A(1, :)));
+	titleString = 'Wavelet Levels ';
+	for i = 1 : 1 : n + 1
+		subplot(n + 1, 1, i)
+		b = b + A(i, :);
+		plot(b)
+		grid
+		title([titleString, int2str(i - 2)])
+		titleString = [titleString, int2str(i - 2), ' + '];
+		xlim([1 M])
+		%ylim([-2 2])
+	end
 end
 
 function a = mapdn(f, N)
-%
+%MAPDN Compute mean-square map of function f
 	M = length(f);
 	n = round(log(M) / log(2));
 	a = wavedn(f, N);
@@ -149,7 +181,7 @@ function a = mapdn(f, N)
 end
 
 function A = wave2dn(F, N)
-%
+%WAVE2DN Two-dimensional wavelet transform
 	[M1, M2] = size(F);
 	for k = 1 : M1
 		B(k, :) = wavedn(F(k, :), N);
@@ -160,7 +192,7 @@ function A = wave2dn(F, N)
 end
 
 function F = iwave2dn(A, N)
-%
+%IWAVE2DN Two-dimensional inverse wavelet transform
 	[M1, M2] = size(A);
 	for k = 1 : M1
 		B(k, :) = iwavedn(A(k, :), N);
@@ -171,7 +203,7 @@ function F = iwave2dn(A, N)
 end
 
 function c = dcoeffs(N)
-%
+%DCOEFFS Generate N coefficients for the wavelet transform
 	if N == 2
 		c(1) = 1;
 		c(2) = 1;
