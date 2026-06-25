@@ -2,72 +2,69 @@ disp("Hello, World!")
 
 %% Complex tone recovery - JCLMS
 
+clear
+
 fs = 1000;
-
-t = (0:999)'/fs;
-
-s = exp(1j*2*pi*50*t);
-
-noise = 0.5*(randn(size(t)) + 1j*randn(size(t)));
+t = (0 : 999)' / fs;
+s = exp(1j * 2 * pi * 50 * t);
+noise = 0.5 * (randn(size(t)) + 1j * randn(size(t)));
 
 x = s + noise;
-
 d = s;
 
 M = 16;
 mu = 0.01;
 
-[y,e,w_hist] = jclms(x,d,M,mu);
+[y, e, w_hist] = jclms(x, d, M, mu);
 
 mse = mean(abs(e).^2);
 
-fprintf('MSE = %f\n',mse);
+fprintf('MSE = %f\n', mse);
 
 %% Adaptive noise cancellation - JCLMS
 
 % Desired channel d(n) = s(n) + v(n)
 % Reference channel x(n) = v_r(n) where v_r(n) is  correlated with the interference v(n)
 
+clear
+
 N = 5000;
-
-s = exp(1j*2*pi*0.05*(0:N-1)).';
-
-v = 0.5*(randn(N,1)+1j*randn(N,1));
+s = exp(1j * 2 * pi * 0.05 * (0 : N - 1)).';
+v = 0.5*(randn(N, 1) + 1j * randn(N, 1));
 
 d = s + v;
+x = v + 0.1 * (randn(N, 1) + 1j * randn(N, 1));
 
-x = v + 0.1*(randn(N,1)+1j*randn(N,1));
-
-[y,e,w_hist] = jclms(x,d,16,0.005);
+[y, e, w_hist] = jclms(x, d, 16, 0.005);
 
 % e contains interference-reduced signal
 
 %% Object Oriented JCLMS
 
-filter = JCLMS(16,0.01);
+clear
 
-for n = 1:length(x)
+filter = JCLMS(16, 0.01);
 
-    [y(n),e(n)] = filter.update(x(n),d(n));
-
+for n = 1 : length(x)
+    [y(n), e(n)] = filter.update(x(n), d(n));
 end
 
 %% Adaptive predicction of a complex sinusoid - JCGL
 
+clear
+
 fs = 1000;
+t = (0 : 999)' / fs;
 
-t = (0:999)'/fs;
-
-x = exp(1j*2*pi*50*t);
-
-x = x + 0.1*(randn(size(x))+1j*randn(size(x)));
+x = exp(1j * 2 * pi * 50 * t);
+x = x + 0.1 * (randn(size(x)) + 1j * randn(size(x)));
 
 M = 8;
 mu = 0.01;
 
-[f,b,k_hist] = jcgl(x,M,mu);
+[f, b, k_hist] = jcgl(x, M, mu);
 
-prediction_error = f(end,:);
+prediction_error = f(end, :);
 
 figure
 plot(abs(prediction_error).^2)
@@ -78,48 +75,39 @@ grid on
 
 %% Spectral tracking - JCGL
 
+clear
+
 fs = 10240;
-
 N = 8192;
+n = (0 : N - 1).';
 
-n = (0:N-1).';
+x = exp(1j * 2 * pi * 0.15 * n);
+x(4097 : end) = exp(1j * 2 * pi * 0.10 * n(4097 : end));
+x = x + 0.1 * (randn(N, 1) + 1j * randn(N, 1));
 
-x = exp(1j*2*pi*0.15*n);
+[f, b, k_hist] = jcgl(x, 10, 0.005);
 
-x(4097:end) = exp(1j*2*pi*0.10*n(4097:end));
+e = f(end, :);
 
-x = x + 0.1*(randn(N,1)+1j*randn(N,1));
-
-[f,b,k_hist] = jcgl(x,10,0.005);
-
-e = f(end,:);
-
-spectrogram(e,256,200,256,fs,'centered')
+figure
+spectrogram(e, 256, 200, 256, fs, 'centered')
 title('JCGL Tracking Frequency Step')
 
 %% System identification - JCLSL
 
 rng(0)
-
 N = 5000;
 
-x = randn(N,1)+1j*randn(N,1);
-
-h = [1;
-     0.6+0.3j;
-     -0.2+0.4j];
-
-d = filter(h,1,x);
-
+x = randn(N, 1) + 1j * randn(N, 1);
+h = [1; 0.6 + 0.3j; -0.2 + 0.4j];
+d = filter(h, 1, x);
 M = 6;
-
 lambda = 0.995;
 
-[y,e,v_hist,k_hist] = ...
-    jclsl(x,d,M,lambda);
+[y, e, v_hist, k_hist] = jclsl(x, d, M, lambda);
 
 figure
-plot(10*log10(abs(e).^2))
+plot(10 * log10(abs(e).^2))
 xlabel('Sample')
 ylabel('Error Power (dB)')
 title('JCLSL System Identification')
@@ -127,53 +115,41 @@ grid on
 
 %% Adaptive line enhancement - JCLSL
 
+clear
+
 fs = 10240;
-
 N = 8192;
-
-n = (0:N-1).';
-
-tone = exp(1j*2*pi*0.12*n);
-
-noise = 0.5*(randn(N,1)+1j*randn(N,1));
+n = (0 : N - 1).';
+tone = exp(1j * 2 * pi * 0.12 * n);
+noise = 0.5 * (randn(N, 1) + 1j * randn(N, 1));
 
 x = tone + noise;
-
 delay = 1;
 
-d = [zeros(delay,1);
-     x(1:end-delay)];
+d = [zeros(delay, 1); x(1 : end - delay)];
 
-[y,e,v_hist,k_hist] = ...
-    jclsl(x,d,12,0.995);
+[y, e, v_hist, k_hist] = jclsl(x, d, 12, 0.995);
 
 figure
-spectrogram(y,256,220,256,fs,'centered')
+spectrogram(y, 256, 220, 256, fs, 'centered')
 title('JCLSL Output')
 
 %% Frequency-step tracking - JCLSL
 
+clear
+
 fs = 10240;
-
 N = 8192;
-
-n = (0:N-1).';
-
-x = exp(1j*2*pi*0.15*n);
-
-x(N/2:end) = ...
-    exp(1j*2*pi*0.10*n(N/2:end));
-
-x = x + ...
-    0.1*(randn(N,1)+1j*randn(N,1));
-
+n = (0 : N - 1).';
+x = exp(1j * 2 * pi * 0.15 * n);
+x(N / 2 : end) = exp(1j * 2 * pi * 0.10 * n(N / 2 : end));
+x = x + 0.1 * (randn(N, 1) + 1j * randn(N, 1));
 d = x;
 
-[y,e,v_hist,k_hist] = ...
-    jclsl(x,d,10,0.995);
+[y, e, v_hist, k_hist] = jclsl(x, d, 10, 0.995);
 
 figure
-spectrogram(e,256,220,256,fs,'centered')
+spectrogram(e, 256, 220, 256, fs, 'centered')
 title('JCLSL Tracking Error')
 
 %% Functions
@@ -222,45 +198,6 @@ function [y,e,w_hist] = jclms(x,d,M,mu)
 		w_hist(:,n) = w;
 
 	end
-end
-
-%% JCLMS Class
-
-classdef JCLMS < handle
-
-    properties
-        M
-        mu
-        w
-        buffer
-    end
-
-    methods
-
-        function obj = JCLMS(M,mu)
-
-            obj.M = M;
-            obj.mu = mu;
-
-            obj.w = zeros(M,1);
-            obj.buffer = zeros(M,1);
-
-        end
-
-        function [y,e] = update(obj,x,d)
-
-            obj.buffer = [x; obj.buffer(1:end-1)];
-
-            y = obj.w' * conj(obj.buffer);
-
-            e = d - y;
-
-            obj.w = obj.w + obj.mu * obj.buffer * conj(e);
-
-        end
-
-    end
-
 end
 
 function [f,b,k_hist] = jcgl(x,M,mu)
