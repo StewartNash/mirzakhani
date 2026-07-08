@@ -2,7 +2,7 @@
 
 Mirzakhani SDR (Software Defined Radio)
 
-# Introduction
+## Introduction
 
 This is an extract from the development of the Mirzakhani SDR intended to serve as a demonstration. I intend it to serve as educational documentation and a template for others wishing to construct a software defined radio. The repository is divided into several folders.
 
