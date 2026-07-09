@@ -127,7 +127,50 @@ for n = 1 + 2 : 1 : N + 1 + 2
 		r_i(2, i) = r_i(2 - 1, i - 1) + conj(K_i(2, i - 1)) * e_i(i - 1);
 		E_ri(3 - 1, i - 1) = (1 - alpha_JCGL) * E_ri(3 - 2, i - 1) + alpha_JCGL * abs(r_i(2 - 1, i - 1))^2;
 		K_di(2, i) = K_di(2 - 1, i) - 2 * alpha_JCGL / (E_ri(2 - 1, i)) * e_di(2 - 1, i) * conj(r_i(2 - 1, i));
-		e_di(i) = e_di(i - 1) + K_di(i) *r_i(2, i);
+		e_di(i) = e_di(i - 1) + K_di(i) * r_i(2, i);
+		for k = 1 : 1 : p
+			a_ik(i, i) = K_i(2, i);
+			if k < 1
+				a_ik(i, k) = a_ik(i - 1, k) + K_i(2, i) * a_ik(i - k, i - 1);
+			end
+		end
+		for k = 0 : 1 : p
+			b_ik(k + 1) = conj(a_ik(i, p - k + 1));
+		end
+	end
+end
+
+% Output
+
+mse = mean(abs(e_di).^2);
+
+fprintf('MSE = %f\n', mse);
+
+%% JCLSL (Joint Complex Least Squares Lattice)
+
+clear
+
+% Filter variables
+
+gamma_i = []; % Gain factor
+epsilon_JCLSL = 0.001;
+
+E_di = 0; % Minimum average squared error
+E_ei = 0; % Minimum forward prediction error
+E_ri = 0; % Minimum backward prediction error
+delta_ei = 0; % Forward (prediction) discrepancy
+delta_ri = 0; % Backward (prediction) discrepancy
+K_ei = 0; % Forward weighting factor (reflection coefficient / partial correlation coefficient)
+K_ri = 0; % Backward weighting factor (reflection coefficient / partial correlation coefficient)
+K_di = 0; % Weighting factor
+
+e_i = []; % i-th order forward prediction error sequence
+r_i = []; % i-th ortder backward prediction error sequence
+e_di = []; % Error
+
+a_ik = []; % Forward prediction (filter) coefficients
+b_ik = []; % Backward prediction (filter) coefficients
+
 	
 
 
