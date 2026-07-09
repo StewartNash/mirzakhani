@@ -6,6 +6,12 @@ Mirzakhani SDR (Software Defined Radio)
 
 This is an extract from the development of the Mirzakhani SDR intended to serve as a demonstration. I intend it to serve as educational documentation and a template for others wishing to construct a software defined radio. The repository is divided into several folders.
 
+1. examples
+2. hardware
+3. misc
+4. vitis
+5. vivado
+
 ## Vivado and Vitis
 
 This combination Vivado and Vitis project is partitioned as follows
