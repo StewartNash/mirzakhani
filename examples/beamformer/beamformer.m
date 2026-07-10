@@ -30,7 +30,7 @@ clear
 
 N = 5000;
 s = exp(1j * 2 * pi * 0.05 * (0 : N - 1)).';
-v = 0.5*(randn(N, 1) + 1j * randn(N, 1));
+v = 0.5 * (randn(N, 1) + 1j * randn(N, 1));
 
 d = s + v;
 x = v + 0.1 * (randn(N, 1) + 1j * randn(N, 1));

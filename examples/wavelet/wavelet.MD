@@ -23,7 +23,7 @@ A description of each of these functions follows.
 
 ### wavedn
 
-waveden(f, N) returns an array whose elements are the wavelet transform of the sequence of elements in f. The analyzing wavelet has N coefficients where N is even.
+wavedn(f, N) returns an array whose elements are the wavelet transform of the sequence of elements in f. The analyzing wavelet has N coefficients where N is even.
 
 ### iwavedn
 

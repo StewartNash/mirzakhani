@@ -12,7 +12,8 @@ classdef JCLMS < handle
     methods
 
         function obj = JCLMS(M,mu)
-
+		%JCLMS Construct an instance of this class
+		%	Detailed explanation goes here
             obj.M = M;
             obj.mu = mu;
 
@@ -22,7 +23,8 @@ classdef JCLMS < handle
         end
 
         function [y,e] = update(obj,x,d)
-
+		%UPDATE Summary of this method goes here
+		%	Detailed explanation goes here
             obj.buffer = [x; obj.buffer(1:end-1)];
 
             y = obj.w' * conj(obj.buffer);

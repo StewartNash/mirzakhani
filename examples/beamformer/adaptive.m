@@ -1,4 +1,4 @@
-% JCLMS (Joint Complex Gradient Transversal Filter)
+%% JCLMS (Joint Complex Gradient Transversal Filter)
 
 clear
 
@@ -14,7 +14,7 @@ ALPHA = 0.01;
 fs = SAMPLE_FREQUENCY;
 t = (0 : SAMPLE_LENGTH - 1)' / fs; % Time
 s = exp(1j * 2 * pi * 50 * t); % Desired signal
-noise = 0.5 * (randn(size(t)) * 1j * randn(size(t)));
+noise = 0.5 * (randn(size(t)) + 1j * randn(size(t)));
 x = s + noise; % Input signal
 d = s; % Desired signal
 
@@ -75,7 +75,7 @@ ALPHA = 0.01;
 fs = SAMPLE_FREQUENCY;
 t = (0 : SAMPLE_LENGTH - 1)' / fs; % Time
 s = exp(1j * 2 * pi * 50 * t); % Desired signal
-noise = 0.5 * (randn(size(t)) * 1j * randn(size(t)));
+noise = 0.5 * (randn(size(t)) + 1j * randn(size(t)));
 x = s + noise; % Input signal
 d = s; % Desired signal
 

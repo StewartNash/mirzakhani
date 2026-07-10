@@ -4,7 +4,7 @@ N = 4;
 n = 128;
 f = zeros(n);
 f(1 : 32) = 1;
-f(65 : 96) : 1;
+f(65 : 96) = 1;
 displayn(f, N);
 
 function a = wavedn(f, N)
