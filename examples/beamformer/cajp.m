@@ -1,4 +1,4 @@
-disp("Hello, World!")
+% Complex Adaptive Joint Process Algorithms
 
 %% Complex tone recovery - JCLMS
 
@@ -18,8 +18,11 @@ mu = 0.01;
 [y, e, w_hist] = jclms(x, d, M, mu);
 
 mse = mean(abs(e).^2);
-
 fprintf('MSE = %f\n', mse);
+
+figure_1 = figure;
+plot(t, abs(d), t, abs(y), t, abs(x));
+legend('Desired Signal', 'Estimated Signal', 'Input Signal');
 
 %% Adaptive noise cancellation - JCLMS
 

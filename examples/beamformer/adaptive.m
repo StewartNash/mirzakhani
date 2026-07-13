@@ -5,7 +5,7 @@ clear
 % Constants (function input parameters)
 
 SAMPLE_FREQUENCY = 1024;
-SAMPLE_LENGTH = 1024;
+SAMPLE_LENGTH = 4 * 1024;
 FILTER_ORDER = 16;
 ALPHA = 0.01;
 
@@ -18,7 +18,7 @@ noise = 0.5 * (randn(size(t)) + 1j * randn(size(t)));
 x = s + noise; % Input signal
 d = s; % Desired signal
 
-p = FILTER_ORDER;
+p = FILTER_ORDER + 1;
 N = length(x);
 
 % Filter variables
@@ -34,30 +34,46 @@ h_k = []; % Filter coefficients
 %a_ik = [] % Forward prediction (filter) coefficients
 %b_ik = [] % Backward prediction (filter) coefficients
 
-h_k = zeros(p + 1, 2)';
+h_k = zeros(p, 2)';
 T = conv(x(1 : p), conj(flipud(x(1 : p)))); % Autocorrelation of signal
 epsilon_JCLMS = T(0 + 1);
-E_e0 = epsilon_JCLMS * ones(p + 1, 2)';
-e_dp = zeros(p + 1, 2)';
+E_e0 = epsilon_JCLMS * ones(1, 2)';
+e_dp = zeros(1, 2)';
+err = [];
+y = [];
 
 for n = 1 : 1 : N
-	if N - n >= p
-		xx = x(n : n + p);
-		dd = d(n : n + p);
+	if n > p
+		xx = x(n - p + 1 : n)';
+		dd = d(n - p + 1 : n)';
 	else
-		xx = [x(n ; N); zeros(p - N + n, 1)];
-		dd = [d(n ; N); zeros(p - N + n, 1)];
+		xx = [zeros(p - n, 1); x(1 : n)]';
+		dd = [zeros(p - n, 1); x(1 : n)]';
 	end
-	e_dp(0 + 1, :) = y + dd';
-	E_e0(0 + 1, :) = E_e0(1 + 1, :);
-	E_e0(1 + 1, :) = (1 - alpha_JCLMS) * E_e0(0 + 1, :) + alpha_JCLMS * abs(xx') .^2;
+	h_k(1 + 1, :) = h_k(0 + 1, :) - 2 * alpha_JCLMS / ((p - 1 + 1) * E_e0(0 + 1)) * e_dp(0 + 1) * conj(fliplr(xx));
+	%for k = 1 : 1 : p
+	%	h_k(1 + 1, k) = h_k(0 + 1, k) - 2 * alpha_JCLMS / ((p - 1 + 1) * E_e0(0 + 1)) * e_dp(0 + 1) * conj(xx(p - k + 1));
+	%end
+	e_dp(1 + 1) = d(n);
+	for k = 1 : 1 : p
+		e_dp(1 + 1) = e_dp(1 + 1) + h_k(1 + 1, k) * xx(p - k + 1);
+	end
+	E_e0(0 + 1) = E_e0(1 + 1);
+	E_e0(1 + 1) = (1 - alpha_JCLMS) * E_e0(0 + 1) + alpha_JCLMS * abs(x(n)) ^ 2;
 	h_k(0 + 1, :) = h_k(1 + 1, :);
+	e_dp(0 + 1) = e_dp(1 + 1);
+	err = [err; e_dp(0 + 1)];
+	y = [y; -h_k(1 + 1, :) * flipud(xx')];
 end
 
 % Output
 
-mse = mean(abs(e_dp(1 + 1, :)).^2);
+mse = mean(abs(err).^2);
 fprintf('MSE = %f\n', mse);
+figure_1 = figure;
+plot(1 : N, abs(d), 1 : N, abs(y), 1 : N, abs(x));
+legend('Desired Signal', 'Estimated Signal', 'Input Signal');
+title('JCLMS');
 
 %% JCGL (Joint Complex Gradient Lattice)
 
