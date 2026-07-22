@@ -94,9 +94,11 @@ clear
 
 SAMPLE_FREQUENCY = 1024;
 %SAMPLE_LENGTH = 1024;
-SAMLE_LENGTH = 18;
+SAMPLE_LENGTH = 18;
 FILTER_ORDER = 16;
 ALPHA = 0.01;
+OFFSET = 1E-10;
+MAXIMAL = 0.999;
 
 % Input signal
 
@@ -163,7 +165,10 @@ for n = 1 : 1 : N
 		temporary_factor = e_i(-1 + 2, i + 2) .* conj(r_i(-2 + 3, i - 1 + 2));
 		temporary_factor = temporary_factor + conj(r_i(-1 + 3, i + 2)) .* e_i(-1 + 2, i - 1 + 2);
 		temporary_factor = abs(temporary_factor);
-		K_i(0 + 2, i + 1) = K_i(-1 + 2, i + 1) - 2 * alpha_JCGL / (E_ri(-2 + 3, i - 1 + 2) + E_ei(-1 + 2, i - 1 + 2)) * temporary_factor;
+		K_i(0 + 2, i + 1) = K_i(-1 + 2, i + 1) - 2 * alpha_JCGL / (E_ri(-2 + 3, i - 1 + 2) + E_ei(-1 + 2, i - 1 + 2) + OFFSET) * temporary_factor;
+		if abs(K_i(0 + 2, i + 1)) > MAXIMAL
+			K_i(0 + 2, i + 1) = MAXIMAL * K_i(0 + 2, i + 1) / abs(K_i(0 + 2, i + 1));
+		end
 		if i ~= 0
 			e_i(0 + 2, i + 2) = e_i(0 + 2, i - 1 + 2) + K_i(0 + 2, i + 1) * r_i(-1 + 3, i - 1 + 2);
 			r_i(0 + 3, i + 2) = r_i(-1 + 3, i - 1 + 2) + conj(K_i(0 + 2, i + 1)) * e_i(0 + 2, i - 1 + 2);
@@ -196,7 +201,7 @@ for n = 1 : 1 : N
 	E_ei(-1 + 2, :) = E_ei(0 + 2, :);
 	err = [err; e_di(0 + 2, p + 2)];
 	diagonal_aik = diag(a_ik);
-	y = [y; -diagonal_aik(0 + 2, p + 2)' * r_i(0 + 3, 0 + 2 : p + 2)'];
+	y = [y; -diagonal_aik(0 + 2 : p + 2)' * r_i(0 + 3, 0 + 2 : p + 2)'];
 end
 
 % Output
